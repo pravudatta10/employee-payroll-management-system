@@ -9,6 +9,7 @@ import com.company.payroll.exception.EmployeeNotFoundException;
 import com.company.payroll.repository.EmployeeRepository;
 import com.company.payroll.repository.SalaryStructureRepository;
 import com.company.payroll.service.EmployeeService;
+import com.company.payroll.util.PayrollConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +34,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         // Validate duplicate email
         if (employeeRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Employee with this email already exists");
+            throw new IllegalArgumentException(PayrollConstants.EMAIL_ALREADY_EXIST);
         }
 
         Employee employee = Employee.builder()
@@ -51,7 +52,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Employee employee = employeeRepository.findByEmpCode(empCode)
                 .orElseThrow(() ->
-                        new EmployeeNotFoundException("Employee not found with empCode: " + empCode)
+                        new EmployeeNotFoundException( PayrollConstants.EMPLOYEE_NOT_FOUND+ empCode)
                 );
 
         return saveOrUpdateEmployee(employee, request);
@@ -62,7 +63,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Employee employee = employeeRepository.findByEmpCode(empCode)
                 .orElseThrow(() ->
-                        new EmployeeNotFoundException("Employee not found with empCode: " + empCode)
+                        new EmployeeNotFoundException(PayrollConstants.EMPLOYEE_NOT_FOUND+ empCode)
                 );
         if (!employee.getActive()) {
             throw new IllegalStateException("Employee already inactive");
