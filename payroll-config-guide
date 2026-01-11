@@ -1,0 +1,12 @@
+H2 Console
+--------------------------
+URL- http://localhost:8080/h2-console
+
+Use THESE exact values
+----------------------
+| Field        | Value                   |
+| ------------ | ----------------------- |
+| Driver Class | `org.h2.Driver`         |
+| JDBC URL     | `jdbc:h2:mem:payrolldb` |
+| Username     | `sa`                    |
+| Password     | *(leave empty)*         |
