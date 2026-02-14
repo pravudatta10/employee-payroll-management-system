@@ -1,11 +1,13 @@
 package com.company.payroll.config;
 
 import com.company.payroll.entity.Employee;
+import com.company.payroll.entity.LeaveBalance;
 import com.company.payroll.entity.LeaveRequest;
 import com.company.payroll.entity.SalaryStructure;
 import com.company.payroll.entity.enums.LeaveStatus;
 import com.company.payroll.entity.enums.LeaveType;
 import com.company.payroll.repository.EmployeeRepository;
+import com.company.payroll.repository.LeaveBalanceRepository;
 import com.company.payroll.repository.LeaveRequestRepository;
 import com.company.payroll.repository.SalaryStructureRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class DataInitializer implements CommandLineRunner {
     private final EmployeeRepository employeeRepository;
     private final SalaryStructureRepository salaryStructureRepository;
     private final LeaveRequestRepository leaveRequestRepository;
+    private final LeaveBalanceRepository leaveBalanceRepository;
 
     @Override
     public void run(String... args) {
@@ -174,7 +177,52 @@ public class DataInitializer implements CommandLineRunner {
                         .appliedDate(LocalDate.of(2024, 4, 3))
                         .build()
         ));
+        leaveBalanceRepository.saveAll(
+                List.of(
 
+                        LeaveBalance.builder()
+                                .employee(employees.get(0))
+                                .leaveYear(LocalDate.now().getYear())
+                                .totalPto(18.0)
+                                .usedPto(2.0)
+                                .totalClSl(12.0)
+                                .usedClSl(2.0)
+                                .build(),
+
+                        LeaveBalance.builder()
+                                .employee(employees.get(1))
+                                .leaveYear(LocalDate.now().getYear())
+                                .totalPto(18.0)
+                                .usedPto(5.0)
+                                .totalClSl(12.0)
+                                .usedClSl(6.0)
+                                .build(),
+
+                        LeaveBalance.builder()
+                                .employee(employees.get(2))
+                                .leaveYear(LocalDate.now().getYear())
+                                .totalPto(18.0)
+                                .usedPto(3.0)
+                                .totalClSl(12.0)
+                                .usedClSl(5.0)
+                                .build(),
+                        LeaveBalance.builder()
+                                .employee(employees.get(3))
+                                .leaveYear(LocalDate.now().getYear())
+                                .totalPto(18.0)
+                                .usedPto(4.0)
+                                .totalClSl(12.0)
+                                .usedClSl(2.0)
+                                .build(),
+                        LeaveBalance.builder()
+                                .employee(employees.get(4))
+                                .leaveYear(LocalDate.now().getYear())
+                                .totalPto(18.0)
+                                .usedPto(7.0)
+                                .totalClSl(12.0)
+                                .usedClSl(2.0)
+                                .build()
+                )
+        );
     }
-
 }

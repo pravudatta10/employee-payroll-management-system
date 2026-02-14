@@ -4,9 +4,12 @@ import com.company.payroll.dto.EmployeeResponseDto;
 import com.company.payroll.dto.OnboardingRequestDto;
 import com.company.payroll.dto.OnboardingResponseDto;
 import com.company.payroll.entity.Employee;
+import com.company.payroll.entity.LeaveBalance;
 import com.company.payroll.entity.SalaryStructure;
 import com.company.payroll.exception.EmployeeNotFoundException;
 import com.company.payroll.repository.EmployeeRepository;
+import com.company.payroll.repository.LeaveBalanceRepository;
+import com.company.payroll.repository.LeaveRequestRepository;
 import com.company.payroll.repository.SalaryStructureRepository;
 import com.company.payroll.service.EmployeeService;
 import com.company.payroll.util.PayrollConstants;
@@ -15,7 +18,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +32,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final SalaryStructureRepository salaryStructureRepository;
-
+    private final LeaveRequestRepository leaveRequestRepository;
+    private final LeaveBalanceRepository leaveBalanceRepository;
     private static final SecureRandom RANDOM = new SecureRandom();
 
     /* ================= PUBLIC METHODS ================= */
@@ -172,7 +181,16 @@ public class EmployeeServiceImpl implements EmployeeService {
         salaryStructure.setPfPercentage(request.getPfPercentage());
 
         salaryStructureRepository.save(salaryStructure);
-
+        Map<String, Double> leaveRemaining = calculateFromJoiningDateToYearEnd(request.getJoiningDate());
+        LeaveBalance leave = LeaveBalance.builder()
+                .employee(employee)
+                .leaveYear(LocalDate.now().getYear())
+                .totalPto(leaveRemaining.get("PTO"))
+                .totalClSl(leaveRemaining.get("clSl"))
+                .usedPto(0.0)
+                .usedClSl(0.0)
+                .build();
+        leaveBalanceRepository.save(leave);
         return buildResponse(savedEmployee);
     }
 
@@ -201,5 +219,27 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .joiningDate(employee.getJoiningDate())
                 .build();
     }
+
+
+    public Map<String, Double> calculateFromJoiningDateToYearEnd(LocalDate joiningDate) {
+        Map<String, Double> totalLeave = new HashMap<>();
+        LocalDate effectiveJoining = joiningDate.getDayOfMonth() <= 15
+                ? joiningDate
+                : joiningDate.plusMonths(1).withDayOfMonth(1);
+
+        LocalDate yearEnd = LocalDate.of(joiningDate.getYear(), 12, 31);
+
+        long completedMonths = ChronoUnit.MONTHS.between(
+                YearMonth.from(effectiveJoining),
+                YearMonth.from(yearEnd)
+        );
+
+        Double pto = completedMonths * PayrollConstants.PTO_PER_MONTH;
+        Double clSl = completedMonths * PayrollConstants.CLSL_PER_MONTH;
+        totalLeave.put("PTO", pto);
+        totalLeave.put("clSl", clSl);
+        return totalLeave;
+    }
+
 
 }
