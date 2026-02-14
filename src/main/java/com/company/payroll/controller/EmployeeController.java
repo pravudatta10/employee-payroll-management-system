@@ -71,4 +71,14 @@ public class EmployeeController {
                 employeeService.getAllActiveEmployees()
         );
     }
+
+    /**
+     * Fetch  active employees based on their emp code
+     * Returns only employees who are currently active in the system.
+     */
+    @GetMapping("/{empCode}")
+    public ResponseEntity<EmployeeResponseDto> getActiveEmployeeByEmpCode(@PathVariable String empCode) {
+        return ResponseEntity.ok(
+                employeeService.getActiveEmployeeByEmpCode(empCode));
+    }
 }

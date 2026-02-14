@@ -12,4 +12,5 @@ public interface EmployeeService {
     OnboardingResponseDto updateEmployeeRecord(String empCode,OnboardingRequestDto onboardingRequestDto);
     void deleteEmployeeRecord(String empCode);
     List<EmployeeResponseDto> getAllActiveEmployees();
+    EmployeeResponseDto getActiveEmployeeByEmpCode(String empCode);
 }

@@ -16,6 +16,7 @@ public class EmployeeResponseDto {
     private String department;
     private String designation;
     private LocalDate joiningDate;
+    private String email;
 
     //salary
     private BigDecimal basicSalary;

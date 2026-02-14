@@ -52,7 +52,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Employee employee = employeeRepository.findByEmpCode(empCode)
                 .orElseThrow(() ->
-                        new EmployeeNotFoundException( PayrollConstants.EMPLOYEE_NOT_FOUND+ empCode)
+                        new EmployeeNotFoundException(PayrollConstants.EMPLOYEE_NOT_FOUND + empCode)
                 );
 
         return saveOrUpdateEmployee(employee, request);
@@ -63,7 +63,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Employee employee = employeeRepository.findByEmpCode(empCode)
                 .orElseThrow(() ->
-                        new EmployeeNotFoundException(PayrollConstants.EMPLOYEE_NOT_FOUND+ empCode)
+                        new EmployeeNotFoundException(PayrollConstants.EMPLOYEE_NOT_FOUND + empCode)
                 );
         if (!employee.getActive()) {
             throw new IllegalStateException("Employee already inactive");
@@ -104,6 +104,32 @@ public class EmployeeServiceImpl implements EmployeeService {
                             .build();
                 })
                 .toList();
+    }
+
+    @Override
+    public EmployeeResponseDto getActiveEmployeeByEmpCode(String empCode) {
+        Employee emp = employeeRepository.findByEmpCode(empCode)
+                .orElseThrow(() ->
+                        new EmployeeNotFoundException(PayrollConstants.EMPLOYEE_NOT_FOUND + empCode)
+                );
+        SalaryStructure salary = salaryStructureRepository
+                .findByEmployee(emp)
+                .orElse(null);
+        return EmployeeResponseDto.builder()
+                .id(emp.getId())
+                .empCode(emp.getEmpCode())
+                .fullName(emp.getFullName())
+                .department(emp.getDepartment())
+                .designation(emp.getDesignation())
+                .joiningDate(emp.getJoiningDate())
+                .email(emp.getEmail())
+                // Salary (null-safe)
+                .basicSalary(salary != null ? salary.getBasicSalary() : null)
+                .hra(salary != null ? salary.getHra() : null)
+                .allowances(salary != null ? salary.getAllowances() : null)
+                .taxPercentage(salary != null ? salary.getTaxPercentage() : null)
+                .pfPercentage(salary != null ? salary.getPfPercentage() : null)
+                .build();
     }
 
 
