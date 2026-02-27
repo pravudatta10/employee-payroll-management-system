@@ -27,7 +27,13 @@ public class Employee extends BaseEntity {
     private String empCode;
 
     @Column(nullable = false, length = 100)
-    private String fullName;
+    private String firstName;
+
+    @Column(length = 100)
+    private String middleName;
+
+    @Column(nullable = false, length = 100)
+    private String lastName;
 
     @Column(nullable = false, length = 100)
     private String email;

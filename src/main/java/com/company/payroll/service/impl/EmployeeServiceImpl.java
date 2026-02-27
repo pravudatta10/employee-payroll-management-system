@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -98,7 +99,10 @@ public class EmployeeServiceImpl implements EmployeeService {
                     return EmployeeResponseDto.builder()
                             .id(emp.getId())
                             .empCode(emp.getEmpCode())
-                            .fullName(emp.getFullName())
+                            .email(emp.getEmail())
+                            .firstName(emp.getFirstName())
+                            .middleName(emp.getMiddleName())
+                            .lastName(emp.getLastName())
                             .department(emp.getDepartment())
                             .designation(emp.getDesignation())
                             .joiningDate(emp.getJoiningDate())
@@ -124,10 +128,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         SalaryStructure salary = salaryStructureRepository
                 .findByEmployee(emp)
                 .orElse(null);
+        LeaveBalance leaveBalance = leaveBalanceRepository.findByEmployee(emp)
+                .orElse(null);
         return EmployeeResponseDto.builder()
                 .id(emp.getId())
                 .empCode(emp.getEmpCode())
-                .fullName(emp.getFullName())
+                .firstName(emp.getFirstName())
+                .middleName(emp.getMiddleName())
+                .lastName(emp.getLastName())
                 .department(emp.getDepartment())
                 .designation(emp.getDesignation())
                 .joiningDate(emp.getJoiningDate())
@@ -138,6 +146,11 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .allowances(salary != null ? salary.getAllowances() : null)
                 .taxPercentage(salary != null ? salary.getTaxPercentage() : null)
                 .pfPercentage(salary != null ? salary.getPfPercentage() : null)
+                //leave balance
+                .totalPTO(leaveBalance.getTotalPto())
+                .usedPTO(leaveBalance.getUsedPto())
+                .totalCLSL(leaveBalance.getTotalClSl())
+                .usedCLSL(leaveBalance.getUsedClSl())
                 .build();
     }
 
@@ -149,15 +162,10 @@ public class EmployeeServiceImpl implements EmployeeService {
             Employee employee,
             OnboardingRequestDto request) {
 
-        // Build full name
-        String fullName = buildFullName(
-                request.getFirstName(),
-                request.getMiddleName(),
-                request.getLastName()
-        );
-
         // Update employee fields
-        employee.setFullName(fullName);
+        employee.setFirstName(request.getFirstName());
+        employee.setMiddleName(request.getMiddleName());
+        employee.setLastName(request.getLastName());
         employee.setEmail(request.getEmail());
         employee.setDepartment(request.getDepartment());
         employee.setDesignation(request.getDesignation());
@@ -185,10 +193,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         LeaveBalance leave = LeaveBalance.builder()
                 .employee(employee)
                 .leaveYear(LocalDate.now().getYear())
-                .totalPto(leaveRemaining.get("PTO"))
-                .totalClSl(leaveRemaining.get("clSl"))
-                .usedPto(0.0)
-                .usedClSl(0.0)
+                .totalPto(BigDecimal.valueOf(leaveRemaining.get("PTO")))
+                .totalClSl(BigDecimal.valueOf(leaveRemaining.get("clSl")))
+                .usedPto(BigDecimal.valueOf(0.0))
+                .usedClSl(BigDecimal.valueOf(0.0))
                 .build();
         leaveBalanceRepository.save(leave);
         return buildResponse(savedEmployee);
@@ -213,7 +221,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     private OnboardingResponseDto buildResponse(Employee employee) {
         return OnboardingResponseDto.builder()
                 .empCode(employee.getEmpCode())
-                .fullName(employee.getFullName())
+                .firstName(employee.getFirstName())
+                .middleName(employee.getMiddleName())
+                .lastName(employee.getLastName())
                 .deptName(employee.getDepartment())
                 .designation(employee.getDesignation())
                 .joiningDate(employee.getJoiningDate())
@@ -240,6 +250,4 @@ public class EmployeeServiceImpl implements EmployeeService {
         totalLeave.put("clSl", clSl);
         return totalLeave;
     }
-
-
 }

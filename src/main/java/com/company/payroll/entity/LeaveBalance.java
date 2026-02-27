@@ -3,6 +3,8 @@ package com.company.payroll.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "leave_balance",
         uniqueConstraints = @UniqueConstraint(
@@ -27,14 +29,14 @@ public class LeaveBalance extends BaseEntity {
     private Integer leaveYear;
 
     @Column(nullable = false, scale = 2)
-    private Double totalPto;
+    private BigDecimal totalPto;
 
     @Column(nullable = false, scale = 2)
-    private Double usedPto;
+    private BigDecimal usedPto;
 
     @Column(nullable = false, scale = 2)
-    private Double totalClSl;
+    private BigDecimal totalClSl;
 
     @Column(nullable = false, scale = 2)
-    private Double usedClSl;
+    private BigDecimal usedClSl;
 }

@@ -36,4 +36,6 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long
             int year,
             LeaveStatus status
     );
+
+    List<LeaveRequest> findByEmployeeEmpCode(String empCode);
 }

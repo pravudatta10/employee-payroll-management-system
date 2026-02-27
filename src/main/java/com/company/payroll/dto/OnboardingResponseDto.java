@@ -9,7 +9,9 @@ import java.time.LocalDate;
 @Builder
 public class OnboardingResponseDto {
     private String empCode;
-    private String fullName;
+    private String firstName;
+    private String middleName;
+    private String lastName;
     private String deptName;
     private String designation;
     private LocalDate joiningDate;

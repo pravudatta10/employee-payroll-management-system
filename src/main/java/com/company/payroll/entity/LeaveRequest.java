@@ -43,4 +43,7 @@ public class LeaveRequest extends BaseEntity {
 
     @Column(updatable = false)
     private LocalDate appliedDate = LocalDate.now();
+
+    @Column(nullable = false)
+    private String reason;
 }
