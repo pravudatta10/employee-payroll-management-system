@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Getter
@@ -49,4 +52,11 @@ public class Employee extends BaseEntity {
 
     @Column(nullable = false)
     private Boolean active = true;
+
+    public String getFullName() {
+        return Stream.of(firstName, middleName, lastName)
+                .filter(Objects::nonNull)
+                .filter(s -> !s.isBlank())
+                .collect(Collectors.joining(" "));
+    }
 }

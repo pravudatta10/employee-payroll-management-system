@@ -109,6 +109,26 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
+    /* ===================== Payroll ===================== */
+    @ExceptionHandler(PayrollNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handlePayrollNotFound(
+            PayrollNotFoundException ex,
+            HttpServletRequest request) {
+
+        log.info("Payroll not found at URI: {} - {}",
+                request.getRequestURI(), ex.getMessage());
+
+        ApiErrorResponse response = ApiErrorResponse.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .error("PAYROLL_NOT_FOUND")
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
     /* ===================== Fallback / Unknown ===================== */
 
     @ExceptionHandler(Exception.class)

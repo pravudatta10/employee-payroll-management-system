@@ -6,7 +6,6 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 
 @Entity
@@ -53,6 +52,15 @@ public class Payroll extends BaseEntity {
     private BigDecimal netSalary;
 
     private LocalDate processedDate;
+
+    @Column(nullable = false, precision = 2, scale = 2)
+    private Integer workingDays;
+
+    @Column(nullable = false, precision = 2, scale = 2)
+    private Integer paidDays;
+
+    @Column(nullable = false, precision = 2, scale = 2)
+    private Integer lopDays;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)

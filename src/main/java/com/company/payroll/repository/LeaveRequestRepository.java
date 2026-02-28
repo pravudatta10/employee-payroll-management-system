@@ -37,5 +37,18 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long
             LeaveStatus status
     );
 
+    @Query("""
+       SELECT l FROM LeaveRequest l
+       WHERE l.employee.id = :employeeId
+       AND l.status = :status
+       AND l.fromDate <= :monthEnd
+       AND l.toDate >= :monthStart
+       """)
+    List<LeaveRequest> findLeavesForPayrollMonth(
+            Long employeeId,
+            LeaveStatus status,
+            LocalDate monthStart,
+            LocalDate monthEnd
+    );
     List<LeaveRequest> findByEmployeeEmpCode(String empCode);
 }
